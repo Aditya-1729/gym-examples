@@ -14,7 +14,7 @@ from gymnasium.experimental.vector import VectorEnv
 from gymnasium.vector.utils import batch_space
 
 
-class EffCartPoleEnv(CartPoleEnv):
+class CustomCartPoleEnv(CartPoleEnv):
     """
     ## Description
 
@@ -41,10 +41,13 @@ class EffCartPoleEnv(CartPoleEnv):
     """
 
     def __init__(self, render_mode: Optional[str] = None, cfg: DictConfig = None):
-        self.cfg=cfg
-        self.energy_mul=cfg.energy_mul
         super().__init__(render_mode)
 
+        self.cfg=cfg
+        self.energy_mul=cfg.energy_mul
+
+        #modify the action space to include a no action option
+        self.action_space = spaces.Discrete(3)
 
     def step(self, action):
         assert self.action_space.contains(
@@ -56,7 +59,15 @@ class EffCartPoleEnv(CartPoleEnv):
         info = {}
         
         x, x_dot, theta, theta_dot = self.state
-        force = self.force_mag if action == 1 else -self.force_mag
+
+        #action 1 is to push the cart to the right, action 0 is to do nothing, action 2 is to
+        if action == 1:
+            force = self.force_mag
+        elif action == 0:
+            force = 0  
+        else:
+            force = -self.force_mag
+        
         costheta = math.cos(theta)
         sintheta = math.sin(theta)
 
@@ -99,11 +110,11 @@ class EffCartPoleEnv(CartPoleEnv):
         )
 
         if not terminated:
-            reward = 1.0 - self.total_energy
+            reward = 1.0 - self.total_energy if self.cfg.energy_penalty else 1.0
         elif self.steps_beyond_terminated is None:
             # Pole just fell!
             self.steps_beyond_terminated = 0
-            reward = 1.0 - self.total_energy
+            reward = 1.0 - self.total_energy if self.cfg.energy_penalty else 1.0
         else:
             if self.steps_beyond_terminated == 0:
                 logger.warn(

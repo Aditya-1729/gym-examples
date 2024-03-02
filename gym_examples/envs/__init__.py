@@ -1,2 +1,2 @@
-from gym_examples.envs.efficient_cartpole import EffCartPoleEnv
+from gym_examples.envs.custom_cartpole import CustomCartPoleEnv
 

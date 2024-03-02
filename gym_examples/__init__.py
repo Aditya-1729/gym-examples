@@ -1,7 +1,7 @@
 from gymnasium.envs.registration import register
 
 register(
-    id="gym_examples/EfficientCartpole",
-    entry_point="gym_examples.envs:EffCartPoleEnv",
+    id="gym_examples/CustomCartpole",
+    entry_point="gym_examples.envs:CustomCartPoleEnv",
     max_episode_steps=500
 )
