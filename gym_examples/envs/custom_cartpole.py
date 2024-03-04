@@ -82,8 +82,8 @@ class CustomCartPoleEnv(CartPoleEnv):
         xacc = temp - self.polemass_length * thetaacc * costheta / self.total_mass
 
 
-        #Energy of the system
-        self.kinetic_energy = 0.5 * self.total_mass*x_dot**2 + 0.5 * self.polemass_length*theta_dot**2
+        #Energy of the system [https://courses.ece.ucsb.edu/ECE594/594D_W10Byl/hw/cartpole_eom.pdf]
+        self.kinetic_energy = 0.5 * self.total_mass*x_dot**2 + 0.5 * self.polemass_length*self.length*theta_dot**2 - self.polemass_length*x_dot*theta_dot*math.cos(theta)
         # potential energy is ignored in the penalty as the potential energy is maximized when the pole tends to be upright
         self.total_energy = self.kinetic_energy 
         self.energy_penalty = self.energy_mul*self.total_energy 
